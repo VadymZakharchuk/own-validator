@@ -9,6 +9,7 @@
           type="text"
           id="email"
           class="auth-page__form-control__input"
+          :class="{ invalid: !authForm.email.isValid }"
           v-model="authForm.email.value"
         />
       </div>
@@ -21,6 +22,7 @@
             :type="typeInput"
             id="password"
             class="auth-page__form-control__input"
+            :class="{ invalid: !authForm.password.isValid }"
             v-model="authForm.password.value"
           />
           <img
@@ -148,5 +150,8 @@ export default {
     border-radius: 4px;
     cursor: pointer;
   }
+}
+.invalid {
+  border: 1px solid var(--errors);
 }
 </style>
