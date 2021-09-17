@@ -12,6 +12,12 @@
           :class="{ invalid: !authForm.email.isValid }"
           v-model="authForm.email.value"
         />
+        <small v-if="authForm.email.errors.required" class="error-message">
+          EMail field can't be empty
+        </small>
+        <small v-if="authForm.email.errors.eMail" class="error-message">
+          Please, enter correct EMail address
+        </small>
       </div>
       <div class="auth-page__form-control">
         <label for="password" class="auth-page__form-control__label">
@@ -38,6 +44,12 @@
             @click="isPassVisible = !isPassVisible"
           />
         </p>
+        <small v-if="authForm.password.errors.required" class="error-message">
+          EMail field can't be empty
+        </small>
+        <small v-if="authForm.password.errors.minLength" class="error-message">
+          Password should be min 6 characters length
+        </small>
       </div>
       <button class="auth-page__submit" type="submit">Submit</button>
     </form>
@@ -118,7 +130,7 @@ export default {
         line-height: 18px;
         color: var(--subtext);
         height: 36px;
-        margin-bottom: 24px;
+        margin-bottom: 8px;
         outline: none;
         border: 1px solid var(--border);
         border-radius: 4px;
@@ -133,7 +145,7 @@ export default {
       }
       img {
         position: absolute;
-        top: 35%;
+        top: 40%;
         right: 8px;
         transform: translateY(-50%);
         cursor: pointer;
@@ -153,5 +165,9 @@ export default {
 }
 .invalid {
   border: 1px solid var(--errors);
+}
+.error-message {
+  align-self: flex-start;
+  color: var(--errors);
 }
 </style>
