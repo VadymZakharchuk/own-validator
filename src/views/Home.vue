@@ -1,5 +1,7 @@
 <template>
   <div class="auth-page">
+    <pre>{{ authForm.email }}</pre>
+    <pre>{{ authForm.password }}</pre>
     <form class="auth-page__form" @submit.prevent="submit">
       <div class="auth-page__form-control">
         <label for="email" class="auth-page__form-control__label">Email</label>
@@ -7,7 +9,7 @@
           type="text"
           id="email"
           class="auth-page__form-control__input"
-          v-model="authForm.email"
+          v-model="authForm.email.value"
         />
       </div>
       <div class="auth-page__form-control">
@@ -19,7 +21,7 @@
             :type="typeInput"
             id="password"
             class="auth-page__form-control__input"
-            v-model="authForm.password"
+            v-model="authForm.password.value"
           />
           <img
             v-if="!isPassVisible"
@@ -46,6 +48,11 @@ import { useForm } from "@/use/form";
 
 const required = (val) => !!val;
 const minLength = (num) => (val) => val.length >= num;
+const eMail = (email) => {
+  const re =
+    /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/i;
+  return re.test(String(email).toLowerCase());
+};
 
 export default {
   name: "Home",
@@ -54,11 +61,11 @@ export default {
     const authForm = useForm({
       email: {
         value: "",
-        validators: { required },
+        validators: { required, eMail },
       },
       password: {
         value: "",
-        validators: { required, minLength: minLength(8) },
+        validators: { required, minLength: minLength(6) },
       },
     });
     const isPassVisible = ref(false);
@@ -85,6 +92,7 @@ export default {
 .auth-page {
   margin: 32px;
   @include flex-column(flex-start, center);
+  color: var(--subtext);
   &__form {
     width: 500px;
     height: auto;
