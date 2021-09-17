@@ -6,11 +6,15 @@ export function useField(field) {
   const errors = reactive({});
 
   const reAssign = (val) => {
+    isValid.value = true
     // if no validators -> empty object {}. Else -> map by validators
     Object.keys(field.validators ?? {}).map((name) => {
       // validator[name] contains a function !!!!
       const valid = field.validators[name](val);
       errors[name] = !valid;
+      if (!valid) {
+        isValid.value = false;
+      }
     });
   };
   reAssign(field.value);
