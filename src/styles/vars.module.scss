@@ -1,0 +1,34 @@
+body {
+  --primary: #4cb5e7;
+  --text: #fff;
+  --main-bg: #14171c;
+  --secondary-bg: #22272f;
+  --tertiary-bg: #343c48;
+  --light-text: #fff;
+  --gray-bg: #afb6bf;
+  --subtext: #9da5b0;
+  --story: #f57ae5;
+  --friends: #ffa65e;
+  --photos: #4cb5e7;
+  --events: #fc4d77;
+  --groups: #68ef9e;
+  --input-background: #191c20;
+  --placeholder: #666f7d;
+  --fourth: #3e434f;
+  --disabled: #727a87;
+  --disabled-text: #68707c;
+  --border: #434c5b;
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 10em var(--tertiary-bg) inset !important;
+    -webkit-text-fill-color: var(--subtext) !important;
+    font-size: 14px;
+  }
+}
+
+//Sizes
+$lg: 1150px;
+$xl: 1366px;
+$xxl: 1920px;

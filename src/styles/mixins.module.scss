@@ -1,0 +1,19 @@
+@mixin flex-column($jc, $ai) {
+  display: flex;
+  flex-direction: column;
+  justify-content: $jc;
+  align-items: $ai;
+}
+@mixin flex-row($jc, $ai) {
+  display: flex;
+  flex-direction: row;
+  justify-content: $jc;
+  align-items: $ai;
+}
+@mixin setFont($font_style, $font_weight, $font_size, $line_height, $color) {
+  font-style: $font_style;
+  font-weight: $font_weight;
+  font-size: $font_size;
+  line-height: $line_height;
+  color: $color;
+}
