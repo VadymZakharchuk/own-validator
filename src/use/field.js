@@ -3,6 +3,7 @@ import { reactive, ref, watch } from "vue";
 export function useField(field) {
   const isValid = ref(true);
   const value = ref(field.value);
+  const touched = ref(false);
   const errors = reactive({});
 
   const reAssign = (val) => {
@@ -19,5 +20,11 @@ export function useField(field) {
   };
   reAssign(field.value);
   watch(value, reAssign);
-  return { value, isValid, errors };
+  return {
+    value,
+    isValid,
+    errors,
+    touched,
+    blur: () => (touched.value = true),
+  };
 }

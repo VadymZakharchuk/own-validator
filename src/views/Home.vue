@@ -1,21 +1,30 @@
 <template>
   <div class="auth-page">
-    <pre>{{ authForm.email }}</pre>
-    <pre>{{ authForm.password }}</pre>
-    <form class="auth-page__form" @submit.prevent="submit">
+    <!--    <pre>{{ authForm }}</pre>-->
+    <h3 v-if="error">{{ error }}</h3>
+    <form class="auth-page__form" @submit.prevent="submitForm">
       <div class="auth-page__form-control">
         <label for="email" class="auth-page__form-control__label">Email</label>
         <input
           type="text"
           id="email"
           class="auth-page__form-control__input"
-          :class="{ invalid: !authForm.email.isValid }"
+          :class="{
+            invalid: !authForm.email.isValid && authForm.email.touched,
+          }"
           v-model="authForm.email.value"
+          @blur="authForm.email.blur"
         />
-        <small v-if="authForm.email.errors.required" class="error-message">
+        <small
+          v-if="authForm.email.errors.required && authForm.email.touched"
+          class="error-message"
+        >
           EMail field can't be empty
         </small>
-        <small v-if="authForm.email.errors.eMail" class="error-message">
+        <small
+          v-else-if="authForm.email.errors.eMail && authForm.email.touched"
+          class="error-message"
+        >
           Please, enter correct EMail address
         </small>
       </div>
@@ -28,8 +37,11 @@
             :type="typeInput"
             id="password"
             class="auth-page__form-control__input"
-            :class="{ invalid: !authForm.password.isValid }"
+            :class="{
+              invalid: !authForm.password.isValid && authForm.password.touched,
+            }"
             v-model="authForm.password.value"
+            @blur="authForm.password.blur"
           />
           <img
             v-if="!isPassVisible"
@@ -44,21 +56,42 @@
             @click="isPassVisible = !isPassVisible"
           />
         </p>
-        <small v-if="authForm.password.errors.required" class="error-message">
+        <small
+          v-if="authForm.password.errors.required && authForm.password.touched"
+          class="error-message"
+        >
           EMail field can't be empty
         </small>
-        <small v-if="authForm.password.errors.minLength" class="error-message">
+        <small
+          v-else-if="
+            authForm.password.errors.minLength && authForm.password.touched
+          "
+          class="error-message"
+        >
           Password should be min 6 characters length
         </small>
       </div>
-      <button class="auth-page__submit" type="submit">Submit</button>
+      <button
+        class="auth-page__submit"
+        type="submit"
+        :disabled="!authForm.valid"
+      >
+        Submit
+      </button>
     </form>
+    <Suspense v-if="isFormSent">
+      <UsersList />
+      <template #fallback>
+        <div class="loader"></div>
+      </template>
+    </Suspense>
   </div>
 </template>
 
 <script>
-import { ref, watch } from "vue";
+import { ref, watch, onErrorCaptured } from "vue";
 import { useForm } from "@/use/form";
+import UsersList from "@/components/UsersList";
 
 const required = (val) => !!val;
 const minLength = (num) => (val) => val.length >= num;
@@ -70,7 +103,7 @@ const eMail = (email) => {
 
 export default {
   name: "Home",
-  components: {},
+  components: { UsersList },
   setup() {
     const authForm = useForm({
       email: {
@@ -84,7 +117,16 @@ export default {
     });
     const isPassVisible = ref(false);
     const typeInput = ref("password");
-
+    const isFormSent = ref(false);
+    const error = ref()
+    onErrorCaptured(e => {
+      error.value = e.message
+    })
+    const submitForm = () => {
+      console.log("EMail: ", authForm.email.value);
+      console.log("Password: ", authForm.password.value);
+      isFormSent.value = true;
+    };
     watch(isPassVisible, () => {
       if (isPassVisible.value) {
         typeInput.value = "text";
@@ -94,8 +136,11 @@ export default {
     });
     return {
       authForm,
+      submitForm,
       isPassVisible,
       typeInput,
+      isFormSent,
+      error,
     };
   },
 };
@@ -169,5 +214,89 @@ export default {
 .error-message {
   align-self: flex-start;
   color: var(--errors);
+}
+button:disabled {
+  color: var(--border);
+  cursor: default;
+}
+
+.loader {
+  font-size: 10px;
+  margin: 50px auto;
+  text-indent: -9999em;
+  width: 11em;
+  height: 11em;
+  border-radius: 50%;
+  background: #ffffff;
+  background: -moz-linear-gradient(
+    left,
+    #ffffff 10%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  background: -webkit-linear-gradient(
+    left,
+    #ffffff 10%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  background: -o-linear-gradient(left, #ffffff 10%, rgba(255, 255, 255, 0) 42%);
+  background: -ms-linear-gradient(
+    left,
+    #ffffff 10%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  background: linear-gradient(
+    to right,
+    #ffffff 10%,
+    rgba(255, 255, 255, 0) 42%
+  );
+  position: relative;
+  -webkit-animation: load3 1.4s infinite linear;
+  animation: load3 1.4s infinite linear;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.loader:before {
+  width: 50%;
+  height: 50%;
+  background: #ffffff;
+  border-radius: 100% 0 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: "";
+}
+.loader:after {
+  background: #2c3e50;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  content: "";
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+@-webkit-keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
 </style>
